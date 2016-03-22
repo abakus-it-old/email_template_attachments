@@ -1,37 +1,31 @@
 from openerp.osv import osv, fields
 import ast
 from openerp.tools.safe_eval import safe_eval as eval
-
+import logging
+_logger = logging.getLogger(__name__)
 
 class EmailTemplate(osv.Model):
 
-    _inherit = "email.template"
+    _inherit = "mail.template"
 
     _columns = {
-        'email_attachments': fields.char(
-            'Add attachments from other field', help='You can only access to the current object. Example: object.attachments_ids')
+        'email_attachments': fields.char('Add attachments from other field', help='You can only access to the current object. Example: object.attachments_ids')
     }
 
 class MailComposeMessage(osv.TransientModel):
     _inherit = 'mail.compose.message'
 
-    def onchange_template_id(self, cr, uid, ids, template_id,
-                             composition_mode, model, res_id, context=None):
+    def onchange_template_id(self, cr, uid, ids, template_id, composition_mode, model, res_id, context=None):
         if not context:
             context = {}
-
-        template_obj = self.pool.get('email.template')
 
         if template_id and isinstance(template_id, list):
             template_id = template_id[0]
 
-        res = super(MailComposeMessage,
-                    self).onchange_template_id(
-                        cr, uid, ids, template_id,
-                        composition_mode, model, res_id, context=context)
+        res = super(MailComposeMessage, self).onchange_template_id(cr, uid, ids, template_id, composition_mode, model, res_id, context=context)
         attach = []
         if template_id:
-            template = template_obj.browse(cr, uid, template_id, context)
+            template = self.pool.get('mail.template').browse(cr, uid, template_id, context)
 
             if template.email_attachments:
                 object = self.pool.get(model).browse(cr, uid, res_id)
