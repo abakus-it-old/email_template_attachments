@@ -1,7 +1,7 @@
 {
     'name': "Email template attachments",
     'version': '1.0',
-    'depends': ["mail","email_template"],
+    'depends': ["mail"],
     'author': "Bernard DELHEZ, AbAKUS it-solutions SARL",
     'website': "http://www.abakusitsolutions.eu",
     'category': 'Email',
